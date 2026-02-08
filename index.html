@@ -1,33 +1,180 @@
-<div class="otros-eventos">
-    <h2>OTROS EVENTOS</h2>
-    <p class="aviso">(AVISO IMPORTANTE: Se prohibe el uso no debido de estos canales a Personas no autorizadas)</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sports Live - Agenda Hoy</title>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'/>
+<link rel="stylesheet" href="https://cdn.plyr.io/3.6.12/plyr.css"/>
+<style>
+:root {
+    --bg-body: #0a0a0a;
+    --bg-card: #1a1a1a;
+    --text-main: #ffffff;
+    --text-dim: #a0a0a0;
+    --accent: #ff9800;
+    --bg-vid: #000000;
+    --focus-border: #ffffff;
+}
 
-    <div style="margin: 30px 0;">
-        <h3 style="margin-bottom: 10px; color: #ffcc00;">RIVER PLATE VS TIGRE - 5 PM</h3>
-        <div class="video-container">
-            <iframe 
-                src="http://175.248.70.80:8080"
-                frameborder="0"
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowfullscreen
-                scrolling="no">
-            </iframe>
-        </div>
-        <p style="margin-top: 8px; font-size: 0.9rem; color: #aaa;">Opción 1</p>
-    </div>
+body.light-mode {
+    --bg-body: #f4f7f6;
+    --bg-card: #ffffff;
+    --text-main: #1a1a1a;
+    --text-dim: #666666;
+    --bg-vid: #e8eaed;
+    --focus-border: #ff9800;
+}
 
-    <!-- Si tienes otra URL diferente para la opción 2, cámbiala aquí -->
-    <div style="margin: 40px 0 20px 0;">
-        <h3 style="margin-bottom: 10px; color: #ffcc00;">RIVER PLATE VS TIGRE - OPCIÓN 2</h3>
-        <div class="video-container">
-            <iframe 
-                src="http://175.248.70.80:8080"
-                frameborder="0"
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowfullscreen
-                scrolling="no">
-            </iframe>
-        </div>
-        <p style="margin-top: 8px; font-size: 0.9rem; color: #aaa;">Opción 2 (copia)</p>
+* {margin:0;padding:0;box-sizing:border-box;}
+body {background: var(--bg-body); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: var(--text-main); transition: 0.4s; overflow-x: hidden;}
+
+.top-bar { display: flex; gap: 20px; padding: 15px; max-width: 1400px; margin: 0 auto; align-items: center; }
+#search-channels { flex: 1; padding: 12px 25px; border-radius: 30px; border: 2px solid transparent; background: var(--bg-card); color: var(--text-main); outline: none; font-size: 16px; }
+#search-channels:focus { border-color: var(--accent); }
+
+.theme-switch-wrapper { display: flex; align-items: center; gap: 10px; }
+.theme-switch { inline-size: 50px; block-size: 26px; position: relative; display: inline-block; }
+.theme-switch input { display: none; }
+.slider { position: absolute; cursor: pointer; inset: 0; background-color: #333; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; block-size: 18px; inline-size: 18px; inset-inline-start: 4px; inset-block-end: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: var(--accent); }
+input:checked + .slider:before { transform: translateX(24px); }
+
+.container { display: flex; gap: 20px; padding: 0 15px 15px 15px; max-width: 1400px; margin: 0 auto; }
+
+.main-video { background: var(--bg-card); border-radius: 16px; padding: 10px; flex: 2; position: sticky; top: 10px; z-index: 100; }
+.main-video video { width:100%; border-radius:10px; background: #000; aspect-ratio: 16/9;}
+.main-video .title { font-size:18px; padding:12px 0; text-align:center; color: var(--accent); font-weight: bold; text-transform: uppercase;}
+
+.video-list { background: var(--bg-card); border-radius: 16px; flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 15px; max-height: 82vh; overflow-y: auto; }
+.video-list::-webkit-scrollbar { width: 6px; }
+.video-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+.vid { background: var(--bg-vid); display:flex; align-items:center; gap:12px; border-radius:12px; padding:10px; border:3px solid transparent; cursor:pointer; transition: 0.2s; outline: none; }
+.vid img { width: 80px; height: 50px; object-fit: cover; border-radius: 6px; background: #222; }
+.text-container { display: flex; flex-direction: column; }
+.vid .title { font-size: 13px; font-weight: bold; color: var(--text-main); margin-bottom: 2px; text-transform: uppercase; }
+.vid .epg { font-size: 11px; color: var(--text-dim); }
+
+.vid:focus { border-color: var(--focus-border); transform: scale(1.02); background: var(--accent); }
+.vid:focus .title, .vid:focus .epg { color: #fff; }
+.vid.active { border-color: var(--accent); background: rgba(255, 152, 0, 0.15); }
+
+@media (max-width: 900px) { 
+  .container { flex-direction: column; } 
+  .main-video { position: sticky; top: 0; width: 100%; border-radius: 0; } 
+  .video-list { width: 100%; max-height: none; overflow: visible; }
+}
+</style>
+</head>
+<body id="body">
+
+<div class="top-bar">
+    <input type="text" id="search-channels" placeholder="🔍 Buscar evento o equipo..." onkeyup="filterChannels()">
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch">
+            <input type="checkbox" id="checkbox" onclick="toggleTheme()">
+            <span class="slider"></span>
+        </label>
     </div>
 </div>
+
+<div class="container">
+  <div class="main-video">
+    <video id="player" class="js-player" controls playsinline autoplay></video>
+    <h3 class="title">Selecciona un evento</h3>
+  </div>
+
+  <div class="video-list" id="playlist">
+    <div class="vid" tabindex="1" data-src="http://tv.zapping.life:8080/live/luisleon023/ecababdf742f/10259.m3u8">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTd1SBhCbaZge8saKpWG3WTJF77F92sFhuHPqkdaIeNRw&s=10">
+        <div class="text-container"><h3 class="title">LOBOS UPNFM VS OLIMPIA</h3><p class="epg">17:15 PM</p></div>
+    </div>
+
+    <div class="vid" tabindex="1" data-src="http://tv.zapping.life:8080/live/luisleon023/ecababdf742f/10259.m3u8">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtOD7lUh05Y7ekoHTXAYP-Z1nmzHieqNXpvtX1v5db-A&s=10">
+        <div class="text-container"><h3 class="title">MOTAGUA VS VICTORIA</h3><p class="epg">19:30 PM</p></div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
+<script src="https://cdn.plyr.io/3.6.12/plyr.js"></script>
+<script>
+const video = document.getElementById('player');
+const player = new Plyr(video, {
+    controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
+    tooltips: { controls: true, seek: true }
+});
+const playlist = document.getElementById('playlist');
+let hls;
+
+function loadChannel(url, title) {
+    document.querySelector('.main-video .title').innerText = title;
+    if (Hls.isSupported()) {
+        if (hls) hls.destroy();
+        hls = new Hls();
+        hls.loadSource(url);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(()=>{}));
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = url; 
+        video.play().catch(()=>{});
+    }
+}
+
+playlist.addEventListener('click', (e) => {
+    const vid = e.target.closest('.vid');
+    if (!vid) return;
+    document.querySelectorAll('.vid').forEach(v => v.classList.remove('active'));
+    vid.classList.add('active');
+    loadChannel(vid.dataset.src, vid.querySelector('.title').innerText);
+});
+
+function filterChannels() {
+    let filter = document.getElementById('search-channels').value.toUpperCase();
+    document.querySelectorAll('.vid').forEach(vid => {
+        let text = vid.innerText.toUpperCase();
+        vid.style.display = text.includes(filter) ? "flex" : "none";
+    });
+}
+
+function toggleTheme() {
+    document.getElementById('body').classList.toggle('light-mode');
+}
+
+// SOPORTE CONTROL REMOTO TV
+let focusIndex = 0;
+document.addEventListener('keydown', (e) => {
+    const visibleCards = Array.from(document.querySelectorAll('.vid')).filter(v => v.style.display !== 'none');
+    if (visibleCards.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        focusIndex = (focusIndex + 1) % visibleCards.length;
+        visibleCards[focusIndex].focus();
+        visibleCards[focusIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        focusIndex = (focusIndex - 1 + visibleCards.length) % visibleCards.length;
+        visibleCards[focusIndex].focus();
+        visibleCards[focusIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if (e.key === 'Enter') {
+        if (document.activeElement.classList.contains('vid')) {
+            document.activeElement.click();
+        }
+    }
+});
+
+window.onload = () => {
+    const firstVid = document.querySelector('.vid');
+    if(firstVid) {
+        firstVid.classList.add('active');
+        loadChannel(firstVid.dataset.src, firstVid.querySelector('.title').innerText);
+    }
+};
+</script>
+</body>
+    </html>
+    
