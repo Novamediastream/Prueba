@@ -4,27 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPORT GOL CR - Agenda</title>
+    <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/clappr-level-selector-plugin@latest/dist/level-selector.min.js"></script>
     <style>
-        :root { --accent: #ff9800; --bg: #0a0a0a; --card: #1a1a1a; }
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; display: flex; flex-direction: column; align-items: center; }
+        :root { --accent: #ff0000; --bg: #0a0a0a; --card: #1a1a1a; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; }
         
-        header { width: 100%; padding: 20px; background: #151515; text-align: center; border-bottom: 2px solid #ff0000; }
-        header img { height: 60px; border-radius: 50%; }
-        
+        header { padding: 15px; background: #151515; text-align: center; border-bottom: 2px solid var(--accent); }
+        header img { height: 50px; border-radius: 50%; }
+
         .container { width: 95%; max-width: 1100px; margin: 20px auto; }
 
         .agenda-grid { display: flex; gap: 20px; background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid #333; }
-        .reproductor-area { flex: 2; }
-        .lista-area { flex: 1; max-height: 500px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .reproductor-area { flex: 2; position: relative; }
+        .lista-area { flex: 1; max-height: 450px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
 
-        /* REPRODUCTOR TIPO IFRAME (PARA EVITAR CORS) */
-        .video-box { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 10px; overflow: hidden; border: 1px solid #444; }
-        .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        /* Contenedor Clappr */
+        #player { width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; background: #000; border: 1px solid #444; }
 
         .partido-card { background: #252525; padding: 12px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; border: 2px solid transparent; }
         .partido-card.active { border-color: var(--accent); background: #333; }
         .partido-card img { width: 50px; height: 50px; border-radius: 5px; object-fit: cover; }
         .partido-card h4 { margin: 0; font-size: 13px; text-transform: uppercase; }
+
+        .aviso-seguridad { background: #ff000022; color: #ff5555; padding: 10px; border-radius: 8px; font-size: 12px; margin-bottom: 15px; border: 1px solid #ff000044; }
 
         @media (max-width: 800px) { .agenda-grid { flex-direction: column; } }
     </style>
@@ -33,44 +36,60 @@
 
     <header>
         <img src="https://i.imgur.com/NzRb9dK.jpeg" alt="Logo">
-        <h2 style="margin:10px 0 0;">SPORT GOL CR</h2>
+        <h2 style="margin:5px 0 0; font-size: 18px;">SPORT GOL CR - EN VIVO</h2>
     </header>
 
     <div class="container">
-        
+        <div class="aviso-seguridad">
+            <strong>Nota:</strong> Si el video no inicia, haz clic en el candado de la barra de direcciones y selecciona <b>"Configuración del sitio" -> "Contenido no seguro" -> "Permitir"</b>. Esto es necesario porque el canal usa un link antiguo (HTTP).
+        </div>
+
         <div class="agenda-grid">
             <div class="reproductor-area">
-                <div class="video-box">
-                    <iframe id="main-player" src="" allowfullscreen></iframe>
-                </div>
-                <div id="p-titulo" style="padding:15px; text-align:center; font-weight:bold; color:var(--accent);">CARGANDO AGENDA...</div>
+                <div id="player"></div>
+                <div id="p-titulo" style="padding:10px; text-align:center; font-weight:bold; color:var(--accent); text-transform: uppercase;">Selecciona un partido</div>
             </div>
 
             <div class="lista-area">
                 <div class="partido-card active" onclick="playStream('http://tv.zapping.life:8080/live/luisleon023/ecababdf742f/9549.m3u8', 'RIVER PLATE VS TIGRE', this)">
                     <img src="https://i.imgur.com/NzRb9dK.jpeg">
-                    <div><h4>RIVER PLATE VS TIGRE</h4><p style="margin:0; font-size:10px; color:#aaa;">EN VIVO</p></div>
+                    <div><h4>RIVER PLATE VS TIGRE</h4><p style="margin:0; font-size:10px; color:#aaa;">OPCIÓN 1</p></div>
                 </div>
 
-                <div class="partido-card" onclick="playStream('http://tv.zapping.life:8080/live/luisleon023/ecababdf742f/157562.m3u8', 'PARTIDO OPCIÓN 2', this)">
+                <div class="partido-card" onclick="playStream('http://tv.zapping.life:8080/live/luisleon023/ecababdf742f/157562.m3u8', 'RIVER PLATE VS TIGRE (OPC 2)', this)">
                     <img src="https://i.imgur.com/NzRb9dK.jpeg">
-                    <div><h4>OPCIÓN SECUNDARIA</h4><p style="margin:0; font-size:10px; color:#aaa;">EN VIVO</p></div>
+                    <div><h4>RIVER PLATE VS TIGRE</h4><p style="margin:0; font-size:10px; color:#aaa;">OPCIÓN 2</p></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        var player;
+
         function playStream(url, titulo, el) {
             document.getElementById('p-titulo').innerText = titulo;
             document.querySelectorAll('.partido-card').forEach(c => c.classList.remove('active'));
             el.classList.add('active');
 
-            // Usamos un reproductor web que salta el CORS por nosotros
-            // Opción 1: m3u8player.org
-            // Opción 2: webtv.org
-            const streamURL = "https://www.m3u8player.org/player.php?url=" + encodeURIComponent(url);
-            document.getElementById('main-player').src = streamURL;
+            // Intentamos usar un proxy de CORS para el manifiesto
+            var finalUrl = "https://corsproxy.io/?" + encodeURIComponent(url);
+
+            if (player) {
+                player.destroy();
+            }
+
+            player = new Clappr.Player({
+                source: finalUrl,
+                parentId: "#player",
+                plugins: [LevelSelector],
+                width: '100%',
+                height: '100%',
+                autoPlay: true,
+                mimeType: "application/x-mpegURL",
+                mediacontrol: { seekbar: "#ff0000", buttons: "#ff0000" },
+                preload: 'auto',
+            });
         }
 
         window.onload = () => {
@@ -79,5 +98,5 @@
         };
     </script>
 </body>
-      </html>
+</html>
 
