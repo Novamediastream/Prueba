@@ -1,91 +1,31 @@
-<!DOCTYPE html>
-<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPORT GOL CR - Agenda</title>
-    <style>
-        :root { --accent: #ff9800; --bg: #0a0a0a; --card: #1a1a1a; }
-        body { margin: 0; font-family: sans-serif; background: var(--bg); color: white; display: flex; flex-direction: column; align-items: center; }
-        
-        header { width: 100%; padding: 20px; background: #151515; text-align: center; border-bottom: 2px solid #ff0000; }
-        header img { height: 60px; border-radius: 50%; }
-        
-        .container { width: 95%; max-width: 1100px; margin: 20px auto; }
+  <link href="https://vjs.zencdn.net/8.23.4/video-js.css" rel="stylesheet" />
 
-        /* DISEÑO DE AGENDA */
-        .agenda-grid { display: flex; gap: 20px; background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid #333; }
-        .reproductor-area { flex: 2; }
-        .lista-area { flex: 1; max-height: 500px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-
-        .iframe-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 10px; overflow: hidden; }
-        .iframe-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-
-        .partido-card { background: #252525; padding: 12px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; border: 2px solid transparent; transition: 0.3s; }
-        .partido-card:hover, .partido-card.active { border-color: var(--accent); background: #333; }
-        .partido-card img { width: 50px; height: 50px; border-radius: 5px; object-fit: cover; }
-        .partido-card h4 { margin: 0; font-size: 14px; text-transform: uppercase; }
-
-        @media (max-width: 800px) { .agenda-grid { flex-direction: column; } }
-    </style>
+  <!-- If you'd like to support IE8 (for Video.js versions prior to v7) -->
+  <!-- <script src="https://vjs.zencdn.net/ie8/1.1.2/videojs-ie8.min.js"></script> -->
 </head>
+
 <body>
+  <video
+    id="my-video"
+    class="video-js"
+    controls
+    preload="auto"
+    width="640"
+    height="264"
+    poster="MY_VIDEO_POSTER.jpg"
+    data-setup="{}"
+  >
+    <source src="http://tv.zapping.life:8080/live/luisleon023/ecababdf742f/9549.m3u8" type="video/mp4" />
+    <source src="MY_VIDEO.webm" type="video/webm" />
+    <p class="vjs-no-js">
+      To view this video please enable JavaScript, and consider upgrading to a
+      web browser that
+      <a href="https://videojs.com/html5-video-support/" target="_blank"
+        >supports HTML5 video</a
+      >
+    </p>
+  </video>
 
-    <header>
-        <img src="https://i.imgur.com/NzRb9dK.jpeg" alt="Logo">
-        <h2 style="margin:10px 0 0; font-size: 1.5rem; color: white;">SPORT GOL CR</h2>
-    </header>
-
-    <div class="container">
-        
-        <div class="iframe-container" style="margin-bottom: 30px; border: 2px solid #333;">
-            <iframe src="https://iblups.com/embed/lstvcr" allowfullscreen></iframe>
-        </div>
-
-        <h3 style="color: var(--accent); text-align: left;">AGENDA DE HOY</h3>
-
-        <div class="agenda-grid">
-            <div class="reproductor-area">
-                <div class="iframe-container">
-                    <iframe id="reproductor-agenda" src="" allowfullscreen></iframe>
-                </div>
-                <div id="titulo-actual" style="padding:15px; text-align:center; font-weight:bold; color:var(--accent);">Selecciona un evento</div>
-            </div>
-
-            <div class="lista-area">
-                <div class="partido-card active" onclick="cambiarCanal('http://tv.zapping.life:8080/live/luisleon023/ecababdf742f/157562.m3u8', 'RIVER PLATE VS TIGRE', this)">
-                    <img src="https://i.imgur.com/NzRb9dK.jpeg">
-                    <div><h4>RIVER PLATE VS TIGRE</h4><p style="margin:0; font-size:11px; color:#aaa;">5:00 PM</p></div>
-                </div>
-
-                <div class="partido-card" onclick="cambiarCanal('http://tv.zapping.life:8080/live/luisleon023/ecababdf742f/9516.m3u8', 'RIVER PLATE VS TIGRE (OPC 2)', this)">
-                    <img src="https://i.imgur.com/NzRb9dK.jpeg">
-                    <div><h4>RIVER PLATE VS TIGRE (OPC 2)</h4><p style="margin:0; font-size:11px; color:#aaa;">OPCIÓN 2</p></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function cambiarCanal(url, titulo, elemento) {
-            // Actualizar título
-            document.getElementById('titulo-actual').innerText = titulo;
-            
-            // Cambiar clase activa
-            document.querySelectorAll('.partido-card').forEach(c => c.classList.remove('active'));
-            elemento.classList.add('active');
-
-            // EL SECRETO: Usamos un reproductor web externo que permite cargar m3u8 por URL
-            // Esto evita que GitHub bloquee el video.
-            const playerURL = "https://m3u8-player.com/player/#" + url;
-            document.getElementById('reproductor-agenda').src = playerURL;
-        }
-
-        // Cargar el primero al iniciar
-        window.onload = () => {
-            const primero = document.querySelector('.partido-card');
-            if(primero) primero.click();
-        };
-    </script>
+  <script src="https://vjs.zencdn.net/8.23.4/video.min.js"></script>
 </body>
-</html>
