@@ -4,207 +4,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPORT GOL CR - En Vivo</title>
-
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.12/plyr.css"/>
-
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Arial', sans-serif;
-            background-color: #0a0a0a;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        :root { --accent: #ff9800; --bg-card: #1a1a1a; }
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; background-color: #0a0a0a; color: white; display: flex; flex-direction: column; align-items: center; }
+        
+        /* HEADER */
+        header { width: 100%; padding: 20px; display: flex; justify-content: center; align-items: center; gap: 20px; background: #151515; }
+        header img { height: 60px; border-radius: 50%; }
+        .titulo-colores { font-size: 2rem; font-weight: bold; background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #0000ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; }
 
-        header {
-            width: 100%;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            background: #151515;
-        }
+        .container { width: 95%; max-width: 1100px; margin: 20px auto; text-align: center; }
 
-        header img {
-            height: 70px;
-            border-radius: 50%;
-        }
+        /* REPRODUCTOR IBLUPS */
+        .main-stream { width: 100%; border-radius: 12px; overflow: hidden; border: 2px solid #333; background: #000; margin-bottom: 30px; }
 
-        .titulo-colores {
-            font-size: 2.2rem;
-            font-weight: bold;
-            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-transform: uppercase;
-        }
+        /* AGENDA ESTILO SOLICITADO */
+        .agenda-container { display: flex; gap: 15px; background: var(--bg-card); padding: 15px; border-radius: 16px; border: 1px solid #333; text-align: left; }
+        .agenda-video { flex: 2; background: #000; border-radius: 12px; overflow: hidden; }
+        .agenda-list { flex: 1; display: flex; flex-direction: column; gap: 10px; max-height: 450px; overflow-y: auto; }
+        
+        .vid-item { background: #252525; display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; cursor: pointer; border: 2px solid transparent; }
+        .vid-item.active { border-color: var(--accent); background: #333; }
+        .vid-item img { width: 60px; height: 40px; border-radius: 4px; object-fit: cover; }
+        .vid-item h4 { font-size: 13px; margin: 0; text-transform: uppercase; color: #fff; }
 
-        .container {
-            width: 95%;
-            max-width: 900px;
-            margin: 20px auto;
-            text-align: center;
-        }
-
-        .canales-section {
-            margin-bottom: 25px;
-            padding: 15px;
-            background: #1a1a1a;
-            border-radius: 12px;
-            border: 1px solid #333;
-        }
-
-        .canales-section h3 {
-            margin-top: 0;
-            font-size: 1rem;
-            color: #ccc;
-            letter-spacing: 1px;
-        }
-
-        .botones-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            color: white;
-            font-size: 0.9rem;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
-        .btn-ws { background-color: #25D366; }
-        .btn-tg { background-color: #0088cc; }
-
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            background: #000;
-            border: 2px solid #333;
-            margin-bottom: 20px;
-            border-radius: 8px;
-        }
-
-        .video-container iframe {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-        }
-
-        .chat-container { margin-bottom: 30px; }
-
-        .otros-eventos {
-            margin-top: 40px;
-            border-top: 1px solid #333;
-            padding-top: 20px;
-        }
-
-        .aviso { color: #ff4444; font-size: 0.8rem; }
-
-        video { width:100%; margin-bottom:25px; border-radius:10px; }
-
-        footer {
-            margin-top: 50px;
-            padding: 30px;
-            width: 100%;
-            background-color: #000;
-            border-top: 2px solid #ff0000;
-            text-align: center;
-            font-size: 0.85rem;
-        }
-
-        footer strong { color: #ff0000; }
-
-        @media (max-width: 600px) {
-            .titulo-colores { font-size: 1.4rem; }
-            header { flex-direction: column; gap: 10px; }
-            .btn { width: 100%; }
-        }
+        footer { margin-top: 50px; padding: 30px; width: 100%; background-color: #000; border-top: 2px solid #ff0000; text-align: center; font-size: 0.85rem; }
+        
+        @media (max-width: 800px) { .agenda-container { flex-direction: column; } }
     </style>
 </head>
 <body>
 
-<header>
-    <img src="https://i.imgur.com/NzRb9dK.jpeg" alt="Logo">
-    <div class="titulo-colores">SPORT GOL CR</div>
-</header>
+    <header>
+        <img src="https://i.imgur.com/NzRb9dK.jpeg" alt="Logo">
+        <div class="titulo-colores">SPORT GOL CR</div>
+    </header>
 
-<div class="container">
+    <div class="container">
+        <div class="main-stream">
+            <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
+                <iframe src="https://iblups.com/embed/lstvcr" style="position:absolute; top:0; left:0; width:100%; height:100%;" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
 
-    <div class="canales-section">
-        <h3>SIGUE NUESTROS CANALES OFICIALES</h3>
-        <div class="botones-container">
-            <a href="#" class="btn btn-ws">WhatsApp 1</a>
-            <a href="#" class="btn btn-ws">WhatsApp 2</a>
-            <a href="#" class="btn btn-tg">Telegram</a>
+        <div class="agenda-container">
+            <div class="agenda-video">
+                <video id="agenda-player" playsinline controls></video>
+                <div id="event-title" style="padding: 10px; background: #222; font-weight: bold; text-align: center; font-size: 14px; color: var(--accent);">SELECCIONA UN PARTIDO</div>
+            </div>
+
+            <div class="agenda-list" id="playlist">
+                <div class="vid-item active" data-url="http://tv.zapping.life:8080/live/luisleon023/ecababdf742f/157562.m3u8">
+                    <img src="https://i.imgur.com/NzRb9dK.jpeg">
+                    <div><h4>RIVER PLATE VS TIGRE</h4><p style="font-size:10px;margin:0;color:#aaa;">5:00 PM</p></div>
+                </div>
+                <div class="vid-item" data-url="http://tv.zapping.life:8080/live/luisleon023/ecababdf742f/9516.m3u8">
+                    <img src="https://i.imgur.com/NzRb9dK.jpeg">
+                    <div><h4>RIVER PLATE VS TIGRE (OPC 2)</h4><p style="font-size:10px;margin:0;color:#aaa;">OPCIÓN 2</p></div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="video-container">
-        <iframe src="https://iblups.com/embed/lstvcr" frameborder="0" allowfullscreen></iframe>
-    </div>
+    <footer>
+        <p>PAGINA WEB CREADA POR <strong>NOVA MEDIA STREAM</strong></p>
+        <p>CONTACTO: novamediastreamcostarica@gmail.com</p>
+        <p>©2026 TODOS LOS DERECHOS RESERVADOS</p>
+    </footer>
 
-    <div class="chat-container">
-        <iframe src="https://www3.cbox.ws/box/?boxid=3552147&boxtag=BGqxjy" width="100%" height="450" frameborder="0"></iframe>
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+    <script>
+        const video = document.getElementById('agenda-player');
+        const plyr = new Plyr(video);
+        let hls;
 
-    <div class="otros-eventos">
-        <h2>OTROS EVENTOS</h2>
-        <p class="aviso">(AVISO IMPORTANTE: Se prohibe el uso no debido de estos canales a Personas no autorizadas)</p>
+        function loadEvent(url, title) {
+            document.getElementById('event-title').innerText = title;
+            // EL TRUCO: Usamos un proxy para que GitHub acepte el link http
+            const finalUrl = "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=600&url=" + encodeURIComponent(url);
 
-        <h3>RIVER PLATE VS TIGRE 5 PM</h3>
-        <video id="player1" controls playsinline></video>
+            if (Hls.isSupported()) {
+                if (hls) hls.destroy();
+                hls = new Hls();
+                hls.loadSource(url); // Intentamos directo primero
+                hls.attachMedia(video);
+                hls.on(Hls.Events.ERROR, function (event, data) {
+                    if (data.fatal) {
+                        // Si falla por seguridad, usamos el proxy de Google o CORS
+                        hls.loadSource("https://corsproxy.io/?" + encodeURIComponent(url));
+                    }
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+            }
+        }
 
-        <h3>RIVER PLATE VS TIGRE OPCIÓN 2</h3>
-        <video id="player2" controls playsinline></video>
-    </div>
+        document.getElementById('playlist').addEventListener('click', (e) => {
+            const item = e.target.closest('.vid-item');
+            if (!item) return;
+            document.querySelectorAll('.vid-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            loadEvent(item.dataset.url, item.querySelector('h4').innerText);
+        });
 
-</div>
-
-<footer>
-    <p>PAGINA WEB CREADA POR <strong>NOVA MEDIA STREAM</strong></p>
-    <p>CONTACTO: novamediastreamcostarica@gmail.com</p>
-    <p>&copy; 2026 TODOS LOS DERECHOS RESERVADOS</p>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
-<script src="https://cdn.plyr.io/3.6.12/plyr.js"></script>
-
-<script>
-function iniciarPlayer(id, url){
-    const video = document.getElementById(id);
-    const player = new Plyr(video,{
-        controls:['play-large','play','progress','current-time','mute','volume','fullscreen'],
-        tooltips:{controls:true,seek:true}
-    });
-
-    if(Hls.isSupported()){
-        const hls = new Hls();
-        hls.loadSource(url);
-        hls.attachMedia(video);
-    }else if(video.canPlayType('application/vnd.apple.mpegurl')){
-        video.src=url;
-    }
-}
-
-iniciarPlayer("player1","http://190.92.10.66:4000/play/a001/index.m3u8");
-iniciarPlayer("player2","https://tv.zapping.life:8080/live/luisleon023/ecababdf742f/9516.m3u8");
-</script>
-
+        window.onload = () => {
+            const first = document.querySelector('.vid-item');
+            if(first) loadEvent(first.dataset.url, first.querySelector('h4').innerText);
+        };
+    </script>
 </body>
 </html>
-```0
